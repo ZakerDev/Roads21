@@ -19,7 +19,10 @@ document.addEventListener("DOMContentLoaded", function() {
         myMap.controls.remove('zoomControl'); // Скрыть кнопки увеличения/уменьшения масштаба
         myMap.controls.remove('typeSelector'); // Скрыть переключатель типа карты (схема/спутник)
         myMap.controls.remove('fullscreenControl');
-        
+        myMap.controls.add('trafficControl', {
+            providerKey: 'traffic#actual', // Используйте 'traffic#actual' для отображения текущей ситуации на дорогах
+            visible: false // Скрываем контрол с пробками
+        });    
         mapIsActive = true;
      
 
@@ -644,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             //Создание балуна
                             var balloonLayout = ymaps.templateLayoutFactory.createClass(
                                 "<div class='my-balloon'>" +
-                                '<a class="close" href="#">Закрыть</a><br />' +
+                                "<a class='close-btnn' href='#' style='font-weight: bold; color: red; position: absolute; top: 5px; right: 5px;'>X</a><br />" +
                                 "<b>Дорога: </b>" + val[1] + "<br />" +
                                 val[2] + "<br />" +
                                 "Расстояние: " +
@@ -665,7 +668,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                     build: function () {
                                         this.constructor.superclass.build.call(this);
                                         this._$element = $('.my-balloon', this.getParentElement());
-                                        this._$element.find('.close')
+                                        this._$element.find('.close-btnn')
                                             .on('click', $.proxy(this.onCloseClick, this));
                             
                                         
@@ -730,7 +733,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                         $dropdown.on('change', function() {
                                             // Получить выбранный вариант
                                             var selectedOption = $(this).val();
-    
+                                            $('.download-button').remove();
+
                                             // Выполнить действия в зависимости от выбора пользователя
                                             if (selectedOption) {
                                                 // Вариант выбран
@@ -801,28 +805,78 @@ document.addEventListener("DOMContentLoaded", function() {
                                                     }
                                                 });*/
                                                 console.log(selectedOption);
+                                                var PathsavedData;
                                                 $.ajax({
-                                                    url: 'get_tables_ved.php', // Путь к PHP-скрипту
+                                                    url: 'getPath.php', // Путь к PHP-скрипту
                                                     dataType: 'text',
                                                     data:{
-                                                        district: district, // ЗАМЕНИТЬ!!!!!!!!!!!!!!
-                                                        roadName: val[1], // Замените на нужное название дороги
-                                                        selectedOption: selectedOption
+                                                        district: district, 
+                                                        roadName: val[1], 
+                                                        roadNumber: val[2] // Замените на нужное название дороги
                                                     },
                                                     
                                                     success: function (data) {
-                                                        
                                                         console.log(data);
-                                                        $('#table-container').html(data);
-                                                        
-                                                        $('#table-container').css('background-color', '#FFFFF6');
-                                                        $('#table-container').css('border', '1px solid #CDB7B5');
-                                                        $('#table-container').css({
-                                                            'height': '300px',
-                                                            'width':'600px',
-                                                            'overflow-x': 'auto', // Горизонтальная прокрутка
-                                                            'margin-top': '10px',
-                                                            'font-size': '12px'
+                                                        PathsavedData = data;
+                                                        $.ajax({
+                                                            url: 'get_tables_ved.php', // Путь к PHP-скрипту
+                                                            dataType: 'text',
+                                                            data:{
+                                                                path: PathsavedData, 
+                                                                selectedOption: selectedOption
+                                                            },
+                                                            
+                                                            success: function (data) {
+                                                                
+                                                                console.log(data);
+                                                                
+                                                                $('#table-container').html(data);
+                                                                
+                                                                $('#table-container').css('background-color', '#FFFFF6');
+                                                                $('#table-container').css('border', '1px solid #CDB7B5');
+                                                                $('#table-container').css({
+                                                                    'height': '300px',
+                                                                    'width':'600px',
+                                                                    'overflow-x': 'auto', // Горизонтальная прокрутка
+                                                                    'margin-top': '10px',
+                                                                    'font-size': '12px'
+                                                                });
+                                                                var downloadButton = $('<a>')
+                                                                .attr('href', 'download_file.php?filename=' + selectedOption + '&district=' + district + '&roadName=' + val[1])
+                                                                .text('Скачать файл')
+                                                                .addClass('download-button')
+                                                                .css({
+                                                                    'background-color': '#FFFFF6',
+                                                                    'border': '1px solid #CDB7B5',
+                                                                    'border-radius': '6px',
+                                                                    'font-family': 'Arial',
+                                                                    'padding': '8px 20px',
+                                                                    'text-align': 'center',
+                                                                    'text-decoration': 'none',
+                                                                    'display': 'inline-block',
+                                                                    'font-size': '14px',
+                                                                    'color': '#333333',
+                                                                    'cursor': 'pointer',
+                                                                     
+                                                                })
+                                                                .hover(
+                                                                    function() {
+                                                                        $(this).css('background-color', '#00FF00'); // Изменение цвета при наведении на зеленый
+                                                                    },
+                                                                    function() {
+                                                                        $(this).css('background-color', '#FFFFF6'); // Возврат к исходному цвету при уходе с кнопки
+                                                                    }
+                                                                );
+                                                                $('#table-container').after(downloadButton);
+                                                                
+                                                            },
+                                                            
+                                                            error: function (errorThrown,jqXHR, textStatus,) {
+                                                                console.error('Не удалось загрузить таблицы');
+                                                                console.error(errorThrown);
+                                                                console.error(jqXHR);
+                                                                console.error(textStatus);
+                                                            }
                                                         });
     
                                                     },
@@ -834,7 +888,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                                         console.error(textStatus);
                                                     }
                                                 });
-    
+                                                
+                                                
+                                                
+                                                 
                                                 
                                             } else {
                                                 // Ничего не выбрано

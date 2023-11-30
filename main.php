@@ -10,7 +10,7 @@
     
     <script src="https://api-maps.yandex.ru/2.1/?apikey=7fd78b29-a85d-4699-8094-5cf73625e847&lang=ru_RU" type="text/javascript"></script>
     <script src="https://yandex.st/jquery/2.2.3/jquery.min.js" type="text/javascript"></script>
-    
+    <script src="folder.js"></script>
 </head>
 
 <body>
@@ -56,14 +56,19 @@
             </div>
         </aside>
         <!-- End of Sidebar Section -->
-
-        <div class="district-name-container">
-            <h3>Выберите район --></h3>
-
-       </div>
-        <div class="map-container">
+        <div class="database-container">
+        
+            <h1 style="text-align: center; font-size: 50px; color: #333;margin-top: 250px;">База Данных</h1>
+            <div id="folders-list"></div>
             
-            <div id="map" style="width: 100%; height: 1000px;"></div>
+        </div>
+        
+        <div class="map-container">
+                <div class="district-name-container">
+                    <h3>Выберите район --></h3>
+
+            </div>
+            <div id="map" style="width: 100%; height: 1500px; margin-top: -50px;"></div>
             <script src="roads.js" type="text/javascript"></script>
             
             <div class="filter-button" id="filterBtn">

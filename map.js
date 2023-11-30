@@ -12,4 +12,10 @@ function init() {
     myMap.controls.remove('searchControl'); // Скрыть поисковое поле
     myMap.controls.remove('zoomControl'); // Скрыть кнопки увеличения/уменьшения масштаба
     myMap.controls.remove('typeSelector'); // Скрыть переключатель типа карты (схема/спутник)
-    myMap.controls.remove('fullscreenControl');}
+    myMap.controls.remove('fullscreenControl');
+    myMap.controls.add('trafficControl', {
+        providerKey: 'traffic#actual', // Используйте 'traffic#actual' для отображения текущей ситуации на дорогах
+        visible: false // Скрываем контрол с пробками
+    });
+
+}

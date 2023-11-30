@@ -4,65 +4,41 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
-$district = $_GET['district'];
-$val1 = $_GET['roadName']; 
+$path = $_GET['path'];
 $selectedOption = $_GET['selectedOption']; 
-
+require 'vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\IOFactory;
 try{
-   if (!empty($district) && !empty($val1) && !empty($selectedOption)) {
+   
 
-       $filePath = 'data/' . $district . '/' . str_replace('–', '-', $val1) . '/' . $selectedOption; 
-       echo ''. $filePath .'';
-       try{
-           if (file_exists($filePath)) {
-               
-               require 'vendor/autoload.php';
+       $filePath =  $path .  '/' . $selectedOption; 
 
-               use "PhpOffice\PhpSpreadsheet\IOFactory";
-
-               // Загрузка файла Excel
-               $spreadsheet = IOFactory::load($filePath);
-
-               // Получение первого листа
-               $sheet = $spreadsheet->getActiveSheet();
-
-               // Вывод содержимого листа в HTML
-               echo '<table border="1">';
-
-               // Вывод заголовков
-               $headerRow = $sheet->getRowIterator(1)->current();
-               echo '<tr>';
-               foreach ($headerRow->getCellIterator() as $cell) {
-               echo '<th>' . $cell->getValue() . '</th>';
-               }
-               echo '</tr>';
-
-               // Вывод строк
-               $rowIterator = $sheet->getRowIterator(2);
-               foreach ($rowIterator as $row) {
-               echo '<tr>';
-               foreach ($row->getCellIterator() as $cell) {
-                  echo '<td>' . $cell->getValue() . '</td>';
-               }
-               echo '</tr>';
-               }
-
-               echo '</table>';
-
-           }
-           
-       } else {
-           echo 'Файл не найден.';
-       }
-   }
-   catch (Exception $e) {
-       $errorMessage = $e->getMessage();
-       error_log('Произошла ошибка: ' . $errorMessage, 0); 
        
-   }
-} else {
-   echo 'Некорректные параметры запроса.';
-}
+        if (file_exists($filePath)) {
+               
+            
+
+
+
+            if (file_exists($filePath)) {
+                $spreadsheet = IOFactory::load($filePath);
+            
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray();
+            
+                echo '<table style="border-collapse: collapse;" border="1">';
+                foreach ($data as $row) {
+                    echo '<tr>';
+                    foreach ($row as $cellData) {
+                        echo '<td style="border: 1px solid #000; padding: 5px;">' . htmlspecialchars($cellData) . '</td>';
+                    }
+                    echo '</tr>';
+                }
+                echo '</table>';
+            } else {
+                echo "Файл не найден или недоступен.";
+            }
+                    }
 
 }
 catch (Exception $e) {

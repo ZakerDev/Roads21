@@ -232,16 +232,16 @@ aside .sidebar .message-count{
     
 
 
-    width: 500px;
-    height: 50px;
+    width: 50vh;
+    height: 6vh;
     background-color: #fafafa;
      
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
-    top: 110px; 
-    right: 650px; 
+    top: 23px; 
+    right: 100px; 
     cursor: pointer;
     z-index: 2;
     box-shadow: 0 0 5px rgb(0, 0, 0);
@@ -271,8 +271,8 @@ aside .sidebar .message-count{
 
 /* Стили для внутреннего контейнера карты (предполагается, что у вас есть элемент с классом "map", в котором содержится карта) */
 .map {
-    width: 100%; /* 100% ширина карты внутри контейнера */
-    height: 100%; /* 100% высота карты внутри контейнера */
+    width: 100%;
+    height: calc(100% - 70px);
 }
 
 
@@ -282,7 +282,7 @@ aside .sidebar .message-count{
 .my-balloon {
     display: inline-block;
     padding: 4px 10px;
-    height: 120px;
+    height: 140px;
     position: relative;
     bottom: 80px;
     left: -10px;
@@ -331,9 +331,12 @@ cursor: pointer;
     background-color: #3498db;
     color: white;
 }
-.close {
+.close-btn {
+    font-weight: bold;
+    color: red;
     margin-top: -3px;
-}              
+}
+        
 .filter-button {
     width: 60px;
     height: 60px;
